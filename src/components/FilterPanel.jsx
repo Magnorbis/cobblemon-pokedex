@@ -66,6 +66,7 @@ const numericCategories = [
   "antiMinLureLevel",
 ];
 
+// Default formatting
 function formatFilterValue(value, category) {
   if (rawValueCategories.includes(category)) {
     return String(value);
@@ -77,6 +78,7 @@ function formatFilterValue(value, category) {
     .join(" ");
 }
 
+// Remove namespace from biome references
 function normalizedBiomeReference(reference) {
   return reference
     .replace(/^#cobblemon:/, "")
@@ -144,6 +146,7 @@ function FilterPanel({
     })),
   );
 
+  // Retrieve all different options and put them in their sets
   pokemon.forEach((pokemonEntry) => {
     pokemonEntry.types?.forEach((type) => {
       types.add(type);
@@ -186,6 +189,7 @@ function FilterPanel({
         });
       });
 
+      // Get all conditions and anticonditions and add to their sets
       const conditions = spawn.conditions || {};
       const anticonditions = spawn.anticonditions || {};
 
@@ -308,6 +312,7 @@ function FilterPanel({
         antiMinLureLevels.add(String(anticonditions.minLureLevel));
       }
 
+      // Add all other conditions in case these exist
       Object.entries(conditions).forEach(([condition, value]) => {
         if (dedicatedConditionNames.includes(condition)) {
           return;
@@ -326,6 +331,7 @@ function FilterPanel({
         }
       });
 
+      // Add all other anticonditions in case these exist
       Object.entries(anticonditions).forEach(([condition, value]) => {
         if (dedicatedAntiConditionNames.includes(condition)) {
           return;
@@ -346,6 +352,7 @@ function FilterPanel({
     });
   });
 
+  // Default sorting
   const sorted = (values) =>
     [...values].sort((a, b) => String(a).localeCompare(String(b)));
 
@@ -386,6 +393,7 @@ function FilterPanel({
     const conditions = spawn.conditions || {};
     const anticonditions = spawn.anticonditions || {};
 
+    // Check if value is present (within its category) in spawn
     switch (category) {
       case "types":
         return pokemonEntry.types?.includes(value);
@@ -565,6 +573,7 @@ function FilterPanel({
           return String(conditionValue) === value;
         }
 
+
         if (category.startsWith("antiOther.")) {
           const condition = category.slice(10);
           const antiConditions = spawn.anticonditions || {};
@@ -586,6 +595,7 @@ function FilterPanel({
     }
   };
 
+  // Check if spawn matches all selected filters
   const matchesSelectedFilters = (
     entry,
     ignoredCategory = null,
@@ -645,6 +655,7 @@ function FilterPanel({
     return true;
   };
 
+  // Check if filter is available in compatibleMode
   const isFilterValueAvailable = (category, value) => {
     if (!compatibleMode) {
       return true;
@@ -721,6 +732,7 @@ function FilterPanel({
     });
   };
 
+  // Toggle filter (checkbox)
   const toggleFilter = (category, value) => {
     setFilters((previous) => {
       const current = previous[category] || [];
@@ -744,6 +756,7 @@ function FilterPanel({
   };
 
   const renderFilter = (label, category, values) => {
+    // (Customized) sorting for different categories
     const sortedValues =
       category === "sky"
         ? ["Yes", "No"].filter((value) => values.has(value))
@@ -810,6 +823,7 @@ function FilterPanel({
     );
   };
 
+  // Searchable checkbox filter
   const renderSearchableFilter = (label, category, values) => {
     const sortedValues = sorted(values);
     const search = filters[`${category}Search`] || "";

@@ -42,11 +42,14 @@ const rawValueCategories = [
   "antiBiomes",
 ];
 
+// Format value
 function formatFilterValue(value, category) {
   if (rawValueCategories.includes(category)) {
     return String(value);
   }
 
+  // Split on - & _ and capitalize first letters
+  // e.g. special_attack -> Special Attack
   return String(value)
     .split(/[-_]/)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -54,6 +57,7 @@ function formatFilterValue(value, category) {
 }
 
 function ActiveFilters({ filters, setFilters }) {
+  // Formatting exceptions (weather, sky, slime chunks) + normal formatting
   const formatValue = (category, value) => {
     if (category === "weather") {
       return value === "rain" ? "Rain" : "Clear";
@@ -95,10 +99,12 @@ function ActiveFilters({ filters, setFilters }) {
     });
   };
 
+  // Clear all filters
   const clearFilters = () => {
     setFilters({});
   };
 
+  // Retrieve all active filters
   const activeFilters = Object.entries(filters).flatMap(
     ([category, values]) => {
       if (category.endsWith("Search")) {
@@ -119,6 +125,7 @@ function ActiveFilters({ filters, setFilters }) {
     },
   );
 
+  // Skylight information with 0-15 formatting
   if (filters.skyLightMin !== undefined || filters.skyLightMax !== undefined) {
     activeFilters.push({
       category: "skyLight",

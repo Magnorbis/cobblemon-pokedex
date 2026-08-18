@@ -65,6 +65,7 @@ function capitalize(value) {
     .join(" ");
 }
 
+// Form formatting
 function formatForm(form) {
   if (!form) {
     return null;
@@ -568,6 +569,7 @@ function renderCell(entry, column) {
   }
 }
 
+// List with all possible spawns
 function PokemonList({ pokemon }) {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
