@@ -3,6 +3,7 @@ import PokemonList from "./components/PokemonList";
 import SearchBar from "./components/SearchBar";
 import FilterPanel from "./components/FilterPanel";
 import ActiveFilters from "./components/ActiveFilters";
+import "./App.css";
 
 function App() {
   const [pokemonData, setPokemonData] = useState(null);
@@ -481,26 +482,38 @@ function App() {
   );
 
   return (
-    <div>
-      <h1>Cobblemon Pokédex</h1>
+    <div className="app">
+      <main className="app-container">
+        <header className="app-header">
+          <h1>Cobblemon Pokédex</h1>
+        </header>
 
-      <SearchBar value={searchQuery} onChange={setSearchQuery} />
+        <section className="search-section">
+          <SearchBar value={searchQuery} onChange={setSearchQuery} />
+        </section>
 
-      <FilterPanel
-        pokemon={pokemonData}
-        filters={filters}
-        setFilters={setFilters}
-        compatibleMode={compatibleMode}
-        setCompatibleMode={setCompatibleMode}
-      />
+        <section className="filters-section">
+          <FilterPanel
+            pokemon={pokemonData}
+            filters={filters}
+            setFilters={setFilters}
+            compatibleMode={compatibleMode}
+            setCompatibleMode={setCompatibleMode}
+          />
+        </section>
 
-      <ActiveFilters filters={filters} setFilters={setFilters} />
+        <section className="active-filters-section">
+          <ActiveFilters filters={filters} setFilters={setFilters} />
+        </section>
 
-      <p>
-        Showing {filteredSpawns} of {totalSpawns} spawn possibilities
-      </p>
+        <section className="results-section">
+          <p className="results-count">
+            Showing {filteredSpawns} of {totalSpawns} spawn possibilities
+          </p>
 
-      <PokemonList pokemon={filteredPokemon} />
+          <PokemonList pokemon={filteredPokemon} />
+        </section>
+      </main>
     </div>
   );
 }

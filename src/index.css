@@ -10,4 +10,33 @@ body {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+:root {
+  --color-background: #111318;
+  --color-surface: #191c23;
+  --color-surface-hover: #222630;
+
+  --color-text: #f1f3f5;
+  --color-text-muted: #9ca3af;
+
+  --color-border: #303540;
+
+  --color-danger: #ef4444;
+
+  /* Pokémon colors */
+  --pokemon-color-1: #78c850;
+  --pokemon-color-2: #a8d08d;
+  --pokemon-color-3: #355e3b;
+
+  --color-primary: var(--pokemon-color-1);
+  --color-primary-hover: var(--pokemon-color-2);
+  --color-primary-dark: var(--pokemon-color-3);
+  --color-primary-alpha: color-mix(
+    in srgb,
+    var(--color-primary) 20%,
+    transparent
+  );
 }

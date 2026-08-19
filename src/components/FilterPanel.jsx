@@ -1,3 +1,5 @@
+import "./FilterPanel.css";
+
 const rawValueCategories = [
   "biomeReferences",
   "biomes",
@@ -573,7 +575,6 @@ function FilterPanel({
           return String(conditionValue) === value;
         }
 
-
         if (category.startsWith("antiOther.")) {
           const condition = category.slice(10);
           const antiConditions = spawn.anticonditions || {};
@@ -776,12 +777,13 @@ function FilterPanel({
               : sorted(values);
 
     return (
-      <div key={category}>
+      <div className="filter-section" key={category}>
         <h3>
           {label}
 
           {filters[category]?.length > 0 && (
             <button
+              className="filter-button-clear"
               type="button"
               onClick={() => {
                 setFilters((previous) => {
@@ -796,29 +798,32 @@ function FilterPanel({
           )}
         </h3>
 
-        {sortedValues.map((value) => {
-          const selected = filters[category]?.includes(value) || false;
+        <div className="filter-options">
+          {sortedValues.map((value) => {
+            const selected = filters[category]?.includes(value) || false;
 
-          const available = isFilterValueAvailable(category, value);
+            const available = isFilterValueAvailable(category, value);
 
-          return (
-            <label
-              key={value}
-              style={{
-                opacity: !available && !selected ? 0.4 : 1,
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selected}
-                disabled={!available && !selected}
-                onChange={() => toggleFilter(category, value)}
-              />
+            return (
+              <label
+                className="filter-option"
+                key={value}
+                style={{
+                  opacity: !available && !selected ? 0.4 : 1,
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={selected}
+                  disabled={!available && !selected}
+                  onChange={() => toggleFilter(category, value)}
+                />
 
-              {formatFilterValue(value, category)}
-            </label>
-          );
-        })}
+                {formatFilterValue(value, category)}
+              </label>
+            );
+          })}
+        </div>
       </div>
     );
   };
@@ -833,12 +838,13 @@ function FilterPanel({
     );
 
     return (
-      <div>
+      <div className="filter-section">
         <h3>
           {label}
 
           {(filters[category]?.length > 0 || filters[`${category}Search`]) && (
             <button
+              className="filter-button-clear"
               type="button"
               onClick={() => {
                 setFilters((previous) => {
@@ -855,6 +861,7 @@ function FilterPanel({
         </h3>
 
         <input
+          className="filter-search"
           type="text"
           placeholder={`Search ${label.toLowerCase()}...`}
           value={search}
@@ -866,44 +873,50 @@ function FilterPanel({
           }
         />
 
-        {filteredValues.map((value) => {
-          const selected = filters[category]?.includes(value) || false;
-          const available = isFilterValueAvailable(category, value);
+        <div className="filter-options">
+          {filteredValues.map((value) => {
+            const selected = filters[category]?.includes(value) || false;
+            const available = isFilterValueAvailable(category, value);
 
-          return (
-            <label
-              key={value}
-              style={{
-                opacity: !available && !selected ? 0.4 : 1,
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selected}
-                disabled={!available && !selected}
-                onChange={() => toggleFilter(category, value)}
-              />
+            return (
+              <label
+                className="filter-option"
+                key={value}
+                style={{
+                  opacity: !available && !selected ? 0.4 : 1,
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={selected}
+                  disabled={!available && !selected}
+                  onChange={() => toggleFilter(category, value)}
+                />
 
-              {formatFilterValue(value, category)}
-            </label>
-          );
-        })}
+                {formatFilterValue(value, category)}
+              </label>
+            );
+          })}
+        </div>
       </div>
     );
   };
 
   return (
-    <div>
-      <h2>Filters</h2>
+    <div className="filter-panel">
+      <div className="filter-panel-header">
+        <h2>Filters</h2>
 
-      <button type="button" onClick={clearFilters}>
-        Clear All Filters
-      </button>
+        <button className="filter-button-clear" type="button" onClick={clearFilters}>
+          Clear All Filters
+        </button>
+      </div>
 
-      <div>
+      <div className="filter-section compatible-filter">
         <h3>Compatible Filters</h3>
 
         <button
+          className="filter-button"
           type="button"
           onClick={() => {
             setCompatibleMode((previous) => {
