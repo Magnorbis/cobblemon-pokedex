@@ -48,7 +48,6 @@
 
 .pokemon-table {
   width: 100%;
-  table-layout: fixed;
   border-collapse: collapse;
   color: var(--color-text);
 }
@@ -81,10 +80,9 @@
 }
 
 .pokemon-table td {
-  max-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .pokemon-table-sort {
@@ -97,7 +95,7 @@
 }
 
 .pokemon-table-sort:hover {
-  color: var(--color-primary)
+  color: var(--color-primary);
 }
 
 .pokemon-table-remove {
@@ -134,70 +132,6 @@
 .pokemon-table td:first-child,
 .pokemon-table th:first-child {
   white-space: nowrap;
-}
-
-.pokemon-table .column-dex {
-  width: 5rem;
-}
-
-.pokemon-table .column-name {
-  width: 15rem;
-}
-
-.pokemon-table .column-types {
-  width: 9rem;
-}
-
-.pokemon-table .column-evYield {
-  width: 10rem;
-}
-
-.pokemon-table .column-bucket {
-  width: 7rem;
-}
-
-.pokemon-table .column-weight {
-  width: 7rem;
-}
-
-.pokemon-table .column-multiplier {
-  width: 14rem;
-}
-
-.pokemon-table .column-biomes {
-  width: 14rem;
-}
-
-.pokemon-table .column-antiBiomes {
-  width: 14rem;
-}
-
-.pokemon-table .column-position {
-  width: 8rem;
-}
-
-.pokemon-table .column-presets {
-  width: 12rem;
-}
-
-.pokemon-table .column-time {
-  width: 7rem;
-}
-
-.pokemon-table .column-weather {
-  width: 7rem;
-}
-
-.pokemon-table .column-skyLight {
-  width: 8rem;
-}
-
-.pokemon-table .column-sky {
-  width: 6rem;
-}
-
-.pokemon-table .column-other {
-  width: 18rem;
 }
 
 /* Responsive */
