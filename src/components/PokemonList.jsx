@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./PokemonList.css";
 
 const allColumns = [
   { key: "dex", label: "Dex", sortable: true, defaultVisible: true },
@@ -611,14 +612,15 @@ function PokemonList({ pokemon }) {
   };
 
   return (
-    <>
-      <div>
-        <strong>Available Columns:</strong>
+    <div className="pokemon-list">
+      <div className="pokemon-list-columns">
+        <span className="pokemon-list-columns-label">Available Columns:</span>
 
         {allColumns
           .filter((column) => !visibleColumns.includes(column.key))
           .map((column) => (
             <button
+              className="pokemon-list-column-button"
               key={column.key}
               type="button"
               onClick={() => toggleColumn(column.key)}
@@ -628,61 +630,72 @@ function PokemonList({ pokemon }) {
           ))}
       </div>
 
-      <table>
-        <thead>
-          <tr>
-            {allColumns
-              .filter((column) => visibleColumns.includes(column.key))
-              .map((column) => {
-                const active = sortColumn === column.key;
+      <div className="pokemon-table-wrapper">
+        <table className="pokemon-table">
+          <thead>
+            <tr>
+              {allColumns
+                .filter((column) => visibleColumns.includes(column.key))
+                .map((column) => {
+                  const active = sortColumn === column.key;
 
-                return (
-                  <th key={column.key}>
-                    {column.sortable ? (
-                      <span
-                        onClick={() => handleSort(column.key)}
-                        style={{
-                          cursor: "pointer",
-                          userSelect: "none",
-                        }}
+                  return (
+                    <th className={`column-${column.key}`} key={column.key}>
+                      {column.sortable ? (
+                        <span
+                          className="pokemon-table-sort"
+                          onClick={() => handleSort(column.key)}
+                        >
+                          {column.label}
+
+                          {active && (sortDirection === "asc" ? " ↑" : " ↓")}
+                        </span>
+                      ) : (
+                        column.label
+                      )}
+
+                      <button
+                        className="pokemon-table-remove"
+                        type="button"
+                        onClick={() => toggleColumn(column.key)}
+                        aria-label={`Remove ${column.label} column`}
                       >
-                        {column.label}
+                        ×
+                      </button>
+                    </th>
+                  );
+                })}
+            </tr>
+          </thead>
 
-                        {active && (sortDirection === "asc" ? " ↑" : " ↓")}
-                      </span>
-                    ) : (
-                      column.label
-                    )}
+          <tbody>
+            {sortedSpawns.map((entry, index) => {
+              const { pokemon, spawn } = entry;
 
-                    <button
-                      type="button"
-                      onClick={() => toggleColumn(column.key)}
-                    >
-                      ×
-                    </button>
-                  </th>
-                );
-              })}
-          </tr>
-        </thead>
+              return (
+                <tr key={`${pokemon.id}-${spawn.id}-${index}`}>
+                  {allColumns
+                    .filter((column) => visibleColumns.includes(column.key))
+                    .map((column) => {
+                      const value = renderCell(entry, column.key);
 
-        <tbody>
-          {sortedSpawns.map((entry, index) => {
-            const { pokemon, spawn } = entry;
-
-            return (
-              <tr key={`${pokemon.id}-${spawn.id}-${index}`}>
-                {allColumns
-                  .filter((column) => visibleColumns.includes(column.key))
-                  .map((column) => (
-                    <td key={column.key}>{renderCell(entry, column.key)}</td>
-                  ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </>
+                      return (
+                        <td
+                          className={`column-${column.key}`}
+                          key={column.key}
+                          title={String(value)}
+                        >
+                          {value}
+                        </td>
+                      );
+                    })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 
