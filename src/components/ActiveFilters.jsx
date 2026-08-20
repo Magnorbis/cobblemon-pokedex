@@ -1,3 +1,5 @@
+import "./ActiveFilters.css";
+
 const filterNames = {
   types: "Type",
   evYield: "EV Yield",
@@ -139,16 +141,39 @@ function ActiveFilters({ filters, setFilters }) {
   }
 
   return (
-    <div>
-      <strong>Active Filters:</strong>
+    <div className="active-filters">
+      <div className="active-filters-header">
+        <strong>Active Filters:</strong>
 
-      <div>
+        <button
+          className="active-filters-clear"
+          type="button"
+          onClick={clearFilters}
+        >
+          Clear All
+        </button>
+      </div>
+
+      <div className="active-filters-list">
         {activeFilters.map((filter, index) => {
           return (
-            <span key={`${filter.category}-${filter.value}-${index}`}>
-              {filter.label}: {formatValue(filter.category, filter.value)}
+            <span
+              className="active-filter"
+              key={`${filter.category}-${filter.value}-${index}`}
+            >
+              <span className="active-filter-label">{filter.label}:</span>
+
+              <span className="active-filter-value">
+                {formatValue(filter.category, filter.value)}
+              </span>
+
               <button
+                className="active-filter-remove"
                 type="button"
+                aria-label={`Remove ${filter.label}: ${formatValue(
+                  filter.category,
+                  filter.value,
+                )}`}
                 onClick={() => removeFilter(filter.category, filter.value)}
               >
                 ×
@@ -157,10 +182,6 @@ function ActiveFilters({ filters, setFilters }) {
           );
         })}
       </div>
-
-      <button type="button" onClick={clearFilters}>
-        Clear All
-      </button>
     </div>
   );
 }
