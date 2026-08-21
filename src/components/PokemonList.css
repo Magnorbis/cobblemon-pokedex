@@ -151,3 +151,20 @@
     padding: 0.6rem 0.7rem;
   }
 }
+
+.pokemon-list-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.pokemon-list-multiplier-value {
+  margin-left: 0.35rem;
+  font-weight: 700;
+}
+
+.pokemon-table .column-other .info-badge {
+  white-space: normal;
+  overflow-wrap: normal;
+}

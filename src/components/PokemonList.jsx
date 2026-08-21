@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./PokemonList.css";
+import InfoBadge from "./InfoBadge";
 
 const allColumns = [
   { key: "dex", label: "Dex", sortable: true, defaultVisible: true },
@@ -103,9 +104,15 @@ function formatTypes(types) {
     return "-";
   }
 
-  return types
-    .map((type) => type.charAt(0).toUpperCase() + type.slice(1))
-    .join(", ");
+  return (
+    <div className="pokemon-list-badges">
+      {types.map((type) => (
+        <InfoBadge key={type} variant={type}>
+          {type.charAt(0).toUpperCase() + type.slice(1)}
+        </InfoBadge>
+      ))}
+    </div>
+  );
 }
 
 function formatEvYield(evYield) {
@@ -113,14 +120,27 @@ function formatEvYield(evYield) {
     return "-";
   }
 
-  return evYield
-    .map((stat) =>
-      stat
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" "),
-    )
-    .join(", ");
+  return (
+    <div className="pokemon-list-badges">
+      {evYield.map((stat) => {
+        const normalizedStat = stat.toLowerCase().replaceAll("_", "-");
+
+        const formattedStat = stat
+          .split(/[\s_]+/)
+          .map(
+            (word) =>
+              word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+          )
+          .join(" ");
+
+        return (
+          <InfoBadge key={stat} variant={`ev-${normalizedStat}`}>
+            {formattedStat}
+          </InfoBadge>
+        );
+      })}
+    </div>
+  );
 }
 
 function formatBucket(bucket) {
@@ -167,7 +187,10 @@ function formatPosition(position) {
     return "-";
   }
 
-  return position.charAt(0).toUpperCase() + position.slice(1);
+  const formattedPosition =
+    position.charAt(0).toUpperCase() + position.slice(1);
+
+  return <InfoBadge>{formattedPosition}</InfoBadge>;
 }
 
 function formatPresets(presets) {
@@ -175,34 +198,44 @@ function formatPresets(presets) {
     return "-";
   }
 
-  return presets
-    .map((preset) =>
-      preset
-        .split("_")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" "),
-    )
-    .join(", ");
+  return (
+    <div className="pokemon-list-badges">
+      {presets.map((preset) => {
+        const formattedPreset = preset
+          .split("_")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+
+        return <InfoBadge key={preset}>{formattedPreset}</InfoBadge>;
+      })}
+    </div>
+  );
 }
 
 function formatTime(conditions) {
   if (!conditions.timeRange) {
-    return "Any";
+    return <InfoBadge>Any</InfoBadge>;
   }
 
   const time = conditions.timeRange.toLowerCase();
 
-  return timeOrder[time]
-    ? time.charAt(0).toUpperCase() + time.slice(1)
-    : conditions.timeRange;
+  const formattedTime = time.charAt(0).toUpperCase() + time.slice(1);
+
+  return <InfoBadge variant={`time-${time}`}>{formattedTime}</InfoBadge>;
 }
 
 function formatWeather(conditions) {
   if (conditions.isRaining === undefined) {
-    return "Any";
+    return <InfoBadge>Any</InfoBadge>;
   }
 
-  return conditions.isRaining ? "Rain" : "Clear";
+  const weather = conditions.isRaining ? "Rain" : "Clear";
+
+  return (
+    <InfoBadge variant={`weather-${weather.toLowerCase()}`}>
+      {weather.charAt(0).toUpperCase() + weather.slice(1)}
+    </InfoBadge>
+  );
 }
 
 function formatSkyLight(conditions) {
@@ -309,7 +342,7 @@ function formatMultiplierCondition(condition, value) {
   return formatItem(value);
 }
 
-function formatMultiplier(multiplier) {
+function formatMultiplierText(multiplier) {
   if (!multiplier || multiplier.multiplier === undefined) {
     return null;
   }
@@ -333,11 +366,14 @@ function formatMultiplier(multiplier) {
     })
     .filter(Boolean);
 
-  if (parts.length === 0) {
-    return `x${multiplier.multiplier}`;
-  }
-
-  return `${parts.join(", ")} x${multiplier.multiplier}`;
+  return (
+    <>
+      {parts.length > 0 && `${parts.join(", ")} `}
+      <span className="pokemon-list-multiplier-value">
+        ×{multiplier.multiplier}
+      </span>
+    </>
+  );
 }
 
 function formatMultipliers(spawn) {
@@ -355,7 +391,15 @@ function formatMultipliers(spawn) {
     return "-";
   }
 
-  return multipliers.map(formatMultiplier).filter(Boolean).join(", ");
+  return (
+    <div className="pokemon-list-badges">
+      {multipliers.map((multiplier, index) => (
+        <InfoBadge key={index} variant="multiplier">
+          {formatMultiplierText(multiplier)}
+        </InfoBadge>
+      ))}
+    </div>
+  );
 }
 
 function formatOther(conditions, anticonditions) {
@@ -368,7 +412,7 @@ function formatOther(conditions, anticonditions) {
     "canSeeSky",
   ]);
 
-  const values = [];
+  const badges = [];
 
   Object.entries(conditions).forEach(([condition, value]) => {
     if (excluded.has(condition)) {
@@ -377,15 +421,15 @@ function formatOther(conditions, anticonditions) {
 
     const name = formatConditionName(condition);
 
-    if (Array.isArray(value)) {
-      const formattedValues = value
-        .map((item) => formatItem(item, condition))
-        .join(", ");
+    const formattedValue = Array.isArray(value)
+      ? value.map((item) => formatItem(item, condition)).join(", ")
+      : formatItem(value, condition);
 
-      values.push(`${name}: ${formattedValues}`);
-    } else {
-      values.push(`${name}: ${formatItem(value, condition)}`);
-    }
+    badges.push(
+      <InfoBadge key={`condition-${condition}`} variant="condition">
+        {name}: {formattedValue}
+      </InfoBadge>,
+    );
   });
 
   Object.entries(anticonditions || {}).forEach(([condition, value]) => {
@@ -395,18 +439,22 @@ function formatOther(conditions, anticonditions) {
 
     const name = formatConditionName(condition);
 
-    if (Array.isArray(value)) {
-      const formattedValues = value
-        .map((item) => formatItem(item, condition))
-        .join(", ");
+    const formattedValue = Array.isArray(value)
+      ? value.map((item) => formatItem(item, condition)).join(", ")
+      : formatItem(value, condition);
 
-      values.push(`ANTI: ${name}: ${formattedValues}`);
-    } else {
-      values.push(`ANTI: ${name}: ${formatItem(value, condition)}`);
-    }
+    badges.push(
+      <InfoBadge key={`anti-condition-${condition}`} variant="anti-condition">
+        ANTI: {name}: {formattedValue}
+      </InfoBadge>,
+    );
   });
 
-  return values.length > 0 ? values.join(", ") : "-";
+  if (badges.length === 0) {
+    return "-";
+  }
+
+  return <div className="pokemon-list-badges">{badges}</div>;
 }
 
 function getSortValue(entry, column) {
@@ -527,7 +575,15 @@ function renderCell(entry, column) {
       return formatEvYield(pokemon.evYield);
 
     case "bucket":
-      return formatBucket(spawn.bucket);
+      if (!spawn.bucket) {
+        return <InfoBadge></InfoBadge>;
+      }
+
+      return (
+        <InfoBadge variant={spawn.bucket}>
+          {formatBucket(spawn.bucket)}
+        </InfoBadge>
+      );
 
     case "level":
       return spawn.level || "-";
@@ -680,11 +736,7 @@ function PokemonList({ pokemon }) {
                       const value = renderCell(entry, column.key);
 
                       return (
-                        <td
-                          className={`column-${column.key}`}
-                          key={column.key}
-                          title={String(value)}
-                        >
+                        <td className={`column-${column.key}`} key={column.key}>
                           {value}
                         </td>
                       );

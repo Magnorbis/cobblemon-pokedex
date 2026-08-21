@@ -1,0 +1,221 @@
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+
+  padding: 0.2rem 0.55rem;
+
+  color: var(--color-text);
+  background: var(--color-surface-hover);
+
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+
+  font-size: 0.85rem;
+  line-height: 1.3;
+  white-space: nowrap;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.info-badge:hover {
+  filter: brightness(1.08);
+}
+
+.info-badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.info-badge-common {
+  color: var(--color-text);
+  background: var(--color-rarity-common);
+  border-color: var(--color-rarity-common);
+}
+
+.info-badge-uncommon {
+  color: var(--color-text);
+  background: var(--color-rarity-uncommon);
+  border-color: var(--color-rarity-uncommon);
+}
+
+.info-badge-rare {
+  color: var(--color-text);
+  background: var(--color-rarity-rare);
+  border-color: var(--color-rarity-rare);
+}
+
+.info-badge-ultra-rare {
+  color: var(--color-text);
+  background: var(--color-rarity-ultra-rare);
+  border-color: var(--color-rarity-ultra-rare);
+}
+
+.info-badge-normal {
+  color: var(--color-text);
+  background: var(--color-type-normal);
+  border-color: var(--color-type-normal);
+}
+
+.info-badge-fire {
+  color: var(--color-text);
+  background: var(--color-type-fire);
+  border-color: var(--color-type-fire);
+}
+
+.info-badge-water {
+  color: var(--color-text);
+  background: var(--color-type-water);
+  border-color: var(--color-type-water);
+}
+
+.info-badge-electric {
+  color: var(--color-text);
+  background: var(--color-type-electric);
+  border-color: var(--color-type-electric);
+}
+
+.info-badge-grass {
+  color: var(--color-text);
+  background: var(--color-type-grass);
+  border-color: var(--color-type-grass);
+}
+
+.info-badge-ice {
+  color: var(--color-text);
+  background: var(--color-type-ice);
+  border-color: var(--color-type-ice);
+}
+
+.info-badge-fighting {
+  color: var(--color-text);
+  background: var(--color-type-fighting);
+  border-color: var(--color-type-fighting);
+}
+
+.info-badge-poison {
+  color: var(--color-text);
+  background: var(--color-type-poison);
+  border-color: var(--color-type-poison);
+}
+
+.info-badge-ground {
+  color: var(--color-text);
+  background: var(--color-type-ground);
+  border-color: var(--color-type-ground);
+}
+
+.info-badge-flying {
+  color: var(--color-text);
+  background: var(--color-type-flying);
+  border-color: var(--color-type-flying);
+}
+
+.info-badge-psychic {
+  color: var(--color-text);
+  background: var(--color-type-psychic);
+  border-color: var(--color-type-psychic);
+}
+
+.info-badge-bug {
+  color: var(--color-text);
+  background: var(--color-type-bug);
+  border-color: var(--color-type-bug);
+}
+
+.info-badge-rock {
+  color: var(--color-text);
+  background: var(--color-type-rock);
+  border-color: var(--color-type-rock);
+}
+
+.info-badge-ghost {
+  color: var(--color-text);
+  background: var(--color-type-ghost);
+  border-color: var(--color-type-ghost);
+}
+
+.info-badge-dragon {
+  color: var(--color-text);
+  background: var(--color-type-dragon);
+  border-color: var(--color-type-dragon);
+}
+
+.info-badge-dark {
+  color: var(--color-text);
+  background: var(--color-type-dark);
+  border-color: var(--color-type-dark);
+}
+
+.info-badge-steel {
+  color: var(--color-text);
+  background: var(--color-type-steel);
+  border-color: var(--color-type-steel);
+}
+
+.info-badge-fairy {
+  color: var(--color-text);
+  background: var(--color-type-fairy);
+  border-color: var(--color-type-fairy);
+}
+
+.info-badge-ev-hp {
+  background: var(--color-ev-hp);
+}
+
+.info-badge-ev-attack {
+  background: var(--color-ev-attack);
+}
+
+.info-badge-ev-defence {
+  background: var(--color-ev-defence);
+}
+
+.info-badge-ev-special-attack {
+  background: var(--color-ev-special-attack);
+}
+
+.info-badge-ev-special-defence {
+  background: var(--color-ev-special-defence);
+  color: var(--color-text-dark)
+}
+
+.info-badge-ev-speed {
+  background: var(--color-ev-speed);
+}
+
+.info-badge-time-day {
+  background: var(--color-time-day);
+  color: var(--color-text-dark);
+}
+
+.info-badge-time-dusk {
+  background: var(--color-time-dusk);
+}
+
+.info-badge-time-night {
+  background: var(--color-time-night);
+}
+
+.info-badge-weather-rain {
+  background: var(--color-weather-rain);
+}
+
+.info-badge-weather-clear {
+  background: var(--color-weather-clear);
+  color: var(--color-text-dark);
+}
+
+.info-badge-condition {
+  background: var(--color-condition-positive);
+  color: var(--color-text-dark);
+}
+
+.info-badge-anti-condition {
+  background: var(--color-condition-negative);
+  color: var(--color-text-dark);
+}

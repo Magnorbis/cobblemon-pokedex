@@ -492,7 +492,7 @@ function App() {
           <SearchBar value={searchQuery} onChange={setSearchQuery} />
         </section>
 
-        <section className="filters-section">
+        {/* <section className="filters-section">
           <FilterPanel
             pokemon={pokemonData}
             filters={filters}
@@ -500,7 +500,7 @@ function App() {
             compatibleMode={compatibleMode}
             setCompatibleMode={setCompatibleMode}
           />
-        </section>
+        </section> */}
 
         <section className="active-filters-section">
           <ActiveFilters filters={filters} setFilters={setFilters} />

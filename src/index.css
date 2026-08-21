@@ -21,6 +21,7 @@ body {
 
   --color-text: #f1f3f5;
   --color-text-muted: #9ca3af;
+  --color-text-dark: #443f3f;
 
   --color-border: #303540;
 
@@ -39,4 +40,51 @@ body {
     var(--color-primary) 20%,
     transparent
   );
+
+  /* Rarity colors */
+  --color-rarity-common: #808080;
+  --color-rarity-uncommon: #4caf50;
+  --color-rarity-rare: #2196f3;
+  --color-rarity-ultra-rare: #9c27b0;
+
+  /* Type colors */
+  --color-type-normal: #a8a77a;
+  --color-type-fire: #ee8130;
+  --color-type-water: #6390f0;
+  --color-type-electric: #f7d02c;
+  --color-type-grass: #7ac74c;
+  --color-type-ice: #96d9d6;
+  --color-type-fighting: #c22e28;
+  --color-type-poison: #a33ea1;
+  --color-type-ground: #e2bf65;
+  --color-type-flying: #a98ff3;
+  --color-type-psychic: #f95587;
+  --color-type-bug: #a6b91a;
+  --color-type-rock: #b6a136;
+  --color-type-ghost: #735797;
+  --color-type-dragon: #6f35fc;
+  --color-type-dark: #705746;
+  --color-type-steel: #b7b7ce;
+  --color-type-fairy: #d685ad;
+
+  /* Ev Yield colors */
+  --color-ev-hp: #6ae67c;
+  --color-ev-attack: #e64343;
+  --color-ev-defence: #e6ab4e;
+  --color-ev-special-attack: #de5eda;
+  --color-ev-special-defence: #efe757;
+  --color-ev-speed: #5ed0eb;
+
+  /* Time colors */
+  --color-time-day: #f4d35e;
+  --color-time-dusk: #f08a4b;
+  --color-time-night: #5865a8;
+
+  /* Weather colors */
+  --color-weather-rain: #5b9bd5;
+  --color-weather-clear: #e6c65c;
+
+  /* Condition colors */
+  --color-condition-positive: #b7e4c7;
+  --color-condition-negative: #f4b8b8;
 }
