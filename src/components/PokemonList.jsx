@@ -60,6 +60,114 @@ const timeOrder = {
   night: 3,
 };
 
+const biomeReferenceColors = {
+  // Forest / vegetation
+  is_forest: "forest",
+  is_jungle: "forest",
+  is_bamboo: "forest",
+  is_taiga: "forest",
+
+  // Grasslands / open vegetation
+  is_grassland: "grass",
+  is_plains: "grass",
+  is_shrubland: "grass",
+
+  // Flowers / lush vegetation
+  is_floral: "floral",
+  is_cherry_blossom: "floral",
+  is_lush: "floral",
+
+  // Wetlands
+  is_swamp: "swamp",
+
+  // Beaches / coasts
+  is_beach: "beach",
+  is_coast: "beach",
+
+  // Dry / arid
+  is_desert: "desert",
+  is_arid: "desert",
+  is_badlands: "desert",
+  is_savanna: "desert",
+  is_sandy: "desert",
+
+  // Oceans
+  is_ocean: "ocean",
+  is_deep_ocean: "ocean",
+  is_cold_ocean: "ocean",
+  is_lukewarm_ocean: "ocean",
+  is_warm_ocean: "ocean",
+  is_frozen_ocean: "ocean",
+
+  // Rivers / freshwater
+  is_river: "river",
+  is_freshwater: "river",
+
+  // Cold / snowy
+  is_cold: "cold",
+  is_freezing: "cold",
+  is_glacial: "cold",
+  is_snowy: "cold",
+  is_snowy_forest: "cold",
+  is_snowy_taiga: "cold",
+  is_tundra: "cold",
+
+  // Mountains / elevated terrain
+  is_mountain: "mountain",
+  is_highlands: "mountain",
+  is_hills: "mountain",
+  is_peak: "mountain",
+  is_plateau: "mountain",
+  is_island: "mountain",
+
+  // Caves / underground
+  is_cave: "cave",
+  is_dripstone: "cave",
+  is_deep_dark: "cave",
+
+  // Mushroom
+  is_mushroom: "mushroom",
+
+  // Magical / unusual
+  is_magical: "magical",
+  is_spooky: "magical",
+
+  // Sky
+  is_sky: "sky",
+
+  // End
+  is_end: "end",
+
+  // General Overworld
+  is_overworld: "overworld",
+
+  // Temperate
+  is_temperate: "temperate",
+
+  // Hot / volcanic
+  is_thermal: "volcanic",
+  is_volcanic: "volcanic",
+
+  // Nether
+  is_nether: "nether",
+  "nether/is_basalt": "nether-basalt",
+  "nether/is_crimson": "nether-crimson",
+  "nether/is_desert": "nether-desert",
+  "nether/is_fungus": "nether-fungus",
+  "nether/is_mountain": "nether-mountain",
+  "nether/is_soul_fire": "nether-soul",
+  "nether/is_soul_sand": "nether-soul",
+  "nether/is_warped": "nether-warped",
+  "nether/is_wasteland": "nether-wasteland",
+};
+
+const biomeColors = {
+  "minecraft:mushroom_fields": "mushroom",
+  "minecraft:sunflower_plains": "sunflower",
+  "minecraft:frozen_river": "frozen-river",
+  "minecraft:snowy_beach": "snowy-beach",
+};
+
 function capitalize(value) {
   return value
     .split("_")
@@ -154,32 +262,61 @@ function formatBucket(bucket) {
     .join(" ");
 }
 
-function formatBiomes(biomes) {
-  if (!biomes || biomes.length === 0) {
+function formatBiomes(biomeGroups, biomeData) {
+  if (!biomeGroups || biomeGroups.length === 0) {
     return "-";
   }
 
-  return biomes
-    .map((biome) => {
-      if (biome.reference) {
-        return biome.reference.replace(
-          /^#(?:cobblemon|minecraft|terralith):/,
-          "",
-        );
-      }
+  return (
+    <div className="pokemon-list-badges">
+      {biomeGroups.map((biome, index) => {
+        if (biome.reference) {
+          const normalizedReference = biome.reference.replace(/^#/, "");
 
-      if (biome.biomes?.length > 0) {
-        return biome.biomes.join(", ");
-      }
+          const reference = normalizedReference.replace(
+            /^(?:cobblemon|minecraft|terralith|c):/,
+            "",
+          );
 
-      return null;
-    })
-    .filter(Boolean)
-    .join(", ");
+          const biomeColor = biomeReferenceColors[reference] || "default";
+          const actualBiomes = biomeData?.[normalizedReference] || [];
+
+          return (
+            <InfoBadge
+              key={`reference-${biome.reference}-${index}`}
+              variant="biome-reference"
+              className={`info-badge-biome-reference-${biomeColor}`}
+              tooltip={actualBiomes}
+            >
+              {reference}
+            </InfoBadge>
+          );
+        }
+
+        if (biome.biomes?.length > 0) {
+          return biome.biomes.map((actualBiome) => {
+            const biomeColor = biomeColors[actualBiome] || "default";
+
+            return (
+              <InfoBadge
+                key={`actual-${actualBiome}`}
+                variant="biome"
+                className={`info-badge-biome-${biomeColor}`}
+              >
+                {actualBiome}
+              </InfoBadge>
+            );
+          });
+        }
+
+        return null;
+      })}
+    </div>
+  );
 }
 
-function formatAntiBiomes(anticonditions) {
-  return formatBiomes(anticonditions?.biomes);
+function formatAntiBiomes(anticonditions, biomeData) {
+  return formatBiomes(anticonditions?.biomes, biomeData);
 }
 
 function formatPosition(position) {
@@ -557,7 +694,7 @@ function sortSpawns(spawns, sortColumn, sortDirection) {
   });
 }
 
-function renderCell(entry, column) {
+function renderCell(entry, column, biomes) {
   const { pokemon, spawn } = entry;
   const conditions = spawn.conditions || {};
 
@@ -595,10 +732,10 @@ function renderCell(entry, column) {
       return formatMultipliers(spawn);
 
     case "biomes":
-      return formatBiomes(spawn.biomes);
+      return formatBiomes(spawn.biomes, biomes);
 
     case "antiBiomes":
-      return formatAntiBiomes(spawn.anticonditions);
+      return formatAntiBiomes(spawn.anticonditions, biomes);
 
     case "position":
       return formatPosition(spawn.position);
@@ -627,7 +764,7 @@ function renderCell(entry, column) {
 }
 
 // List with all possible spawns
-function PokemonList({ pokemon }) {
+function PokemonList({ pokemon, biomes }) {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
 
@@ -733,7 +870,7 @@ function PokemonList({ pokemon }) {
                   {allColumns
                     .filter((column) => visibleColumns.includes(column.key))
                     .map((column) => {
-                      const value = renderCell(entry, column.key);
+                      const value = renderCell(entry, column.key, biomes);
 
                       return (
                         <td className={`column-${column.key}`} key={column.key}>

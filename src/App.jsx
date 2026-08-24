@@ -4,6 +4,7 @@ import SearchBar from "./components/SearchBar";
 import FilterPanel from "./components/FilterPanel";
 import ActiveFilters from "./components/ActiveFilters";
 import "./App.css";
+import biomes from "../public/data/biomes.json"
 
 function App() {
   const [pokemonData, setPokemonData] = useState(null);
@@ -492,7 +493,7 @@ function App() {
           <SearchBar value={searchQuery} onChange={setSearchQuery} />
         </section>
 
-        {/* <section className="filters-section">
+        <section className="filters-section">
           <FilterPanel
             pokemon={pokemonData}
             filters={filters}
@@ -500,7 +501,7 @@ function App() {
             compatibleMode={compatibleMode}
             setCompatibleMode={setCompatibleMode}
           />
-        </section> */}
+        </section>
 
         <section className="active-filters-section">
           <ActiveFilters filters={filters} setFilters={setFilters} />
@@ -511,7 +512,7 @@ function App() {
             Showing {filteredSpawns} of {totalSpawns} spawn possibilities
           </p>
 
-          <PokemonList pokemon={filteredPokemon} />
+          <PokemonList pokemon={filteredPokemon} biomes={biomes} />
         </section>
       </main>
     </div>
