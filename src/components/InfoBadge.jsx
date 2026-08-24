@@ -10,7 +10,7 @@ function InfoBadge({
     <span className={`info-badge info-badge-${variant} ${className}`}>
       {children}
 
-      {tooltip && (
+      {tooltip && tooltip.length > 0 && (
         <span className="info-badge-tooltip">
           {tooltip.map((item) => (
             <span className="info-badge-tooltip-item" key={item}>
