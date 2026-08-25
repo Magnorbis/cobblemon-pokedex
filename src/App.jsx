@@ -4,26 +4,40 @@ import SearchBar from "./components/SearchBar";
 import FilterPanel from "./components/FilterPanel";
 import ActiveFilters from "./components/ActiveFilters";
 import "./App.css";
-import biomes from "../public/data/biomes.json"
 
 function App() {
   const [pokemonData, setPokemonData] = useState(null);
+  const [biomes, setBiomes] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({});
   const [compatibleMode, setCompatibleMode] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("/data/pokemon.json")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to load pokemon.json: ${response.status}`);
+    Promise.all([fetch("/data/pokemon.json"), fetch("/data/biomes.json")])
+      .then(async ([pokemonResponse, biomesResponse]) => {
+        if (!pokemonResponse.ok) {
+          throw new Error(
+            `Failed to load pokemon.json: ${pokemonResponse.status}`,
+          );
         }
 
-        return response.json();
+        if (!biomesResponse.ok) {
+          throw new Error(
+            `Failed to load biomes.json: ${biomesResponse.status}`,
+          );
+        }
+
+        const [pokemonData, biomesData] = await Promise.all([
+          pokemonResponse.json(),
+          biomesResponse.json(),
+        ]);
+
+        return { pokemonData, biomesData };
       })
-      .then((data) => {
-        setPokemonData(data);
+      .then(({ pokemonData, biomesData }) => {
+        setPokemonData(pokemonData);
+        setBiomes(biomesData);
       })
       .catch((error) => {
         console.error(error);
@@ -35,7 +49,7 @@ function App() {
     return <h1>Error: {error}</h1>;
   }
 
-  if (pokemonData == null) {
+  if (pokemonData == null || biomes == null) {
     return <h1>Loading Pokémon...</h1>;
   }
 

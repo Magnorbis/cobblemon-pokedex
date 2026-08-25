@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./PokemonList.css";
 import InfoBadge from "./InfoBadge";
+import LoadMore from "./LoadMore";
 
 const allColumns = [
   { key: "dex", label: "Dex", sortable: true, defaultVisible: true },
@@ -768,6 +769,10 @@ function PokemonList({ pokemon, biomes }) {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
 
+  const ROWS_PER_BATCH = 50;
+
+  const [visibleRowCount, setVisibleRowCount] = useState(ROWS_PER_BATCH);
+
   const [visibleColumns, setVisibleColumns] = useState(
     allColumns
       .filter((column) => column.defaultVisible)
@@ -782,6 +787,10 @@ function PokemonList({ pokemon, biomes }) {
   );
 
   const sortedSpawns = sortSpawns(spawns, sortColumn, sortDirection);
+
+  useEffect(() => {
+    setVisibleRowCount(ROWS_PER_BATCH);
+  }, [sortColumn, sortDirection]);
 
   const handleSort = (column) => {
     if (sortColumn === column) {
@@ -862,7 +871,7 @@ function PokemonList({ pokemon, biomes }) {
           </thead>
 
           <tbody>
-            {sortedSpawns.map((entry, index) => {
+            {sortedSpawns.slice(0, visibleRowCount).map((entry, index) => {
               const { pokemon, spawn } = entry;
 
               return (
@@ -883,6 +892,16 @@ function PokemonList({ pokemon, biomes }) {
             })}
           </tbody>
         </table>
+
+        {visibleRowCount < sortedSpawns.length && (
+          <LoadMore
+            onLoadMore={() => {
+              setVisibleRowCount((previous) =>
+                Math.min(previous + ROWS_PER_BATCH, sortedSpawns.length),
+              );
+            }}
+          />
+        )}
       </div>
     </div>
   );
