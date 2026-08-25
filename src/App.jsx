@@ -526,7 +526,11 @@ function App() {
             Showing {filteredSpawns} of {totalSpawns} spawn possibilities
           </p>
 
-          <PokemonList pokemon={filteredPokemon} biomes={biomes} />
+          <PokemonList
+            key={`${searchQuery}-${JSON.stringify(filters)}-${compatibleMode}`}
+            pokemon={filteredPokemon}
+            biomes={biomes}
+          />
         </section>
       </main>
     </div>

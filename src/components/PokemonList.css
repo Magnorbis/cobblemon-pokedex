@@ -47,6 +47,23 @@
   background: var(--color-surface);
 }
 
+.pokemon-table-wrapper::-webkit-scrollbar {
+  height: 0.4rem;
+}
+
+.pokemon-table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pokemon-table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+}
+
+.pokemon-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
 .pokemon-table {
   width: 100%;
   border-collapse: collapse;

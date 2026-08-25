@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-function loadMore({ onLoadMore, rootMargin = "500px" }) {
+function LoadMore({ onLoadMore, rootMargin = "500px" }) {
   const elementRef = useRef(null);
 
   useEffect(() => {
@@ -32,4 +32,4 @@ function loadMore({ onLoadMore, rootMargin = "500px" }) {
   return <div ref={elementRef} aria-hidden="true" />
 }
 
-export default loadMore;
+export default LoadMore;

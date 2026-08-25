@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./PokemonList.css";
 import InfoBadge from "./InfoBadge";
 import LoadMore from "./LoadMore";
@@ -764,13 +764,11 @@ function renderCell(entry, column, biomes) {
   }
 }
 
+const ROWS_PER_BATCH = 50;
 // List with all possible spawns
 function PokemonList({ pokemon, biomes }) {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
-
-  const ROWS_PER_BATCH = 50;
-
   const [visibleRowCount, setVisibleRowCount] = useState(ROWS_PER_BATCH);
 
   const [visibleColumns, setVisibleColumns] = useState(
@@ -788,10 +786,6 @@ function PokemonList({ pokemon, biomes }) {
 
   const sortedSpawns = sortSpawns(spawns, sortColumn, sortDirection);
 
-  useEffect(() => {
-    setVisibleRowCount(ROWS_PER_BATCH);
-  }, [sortColumn, sortDirection]);
-
   const handleSort = (column) => {
     if (sortColumn === column) {
       setSortDirection((previous) => (previous === "asc" ? "desc" : "asc"));
@@ -799,6 +793,8 @@ function PokemonList({ pokemon, biomes }) {
       setSortColumn(column);
       setSortDirection("asc");
     }
+
+    setVisibleRowCount(ROWS_PER_BATCH);
   };
 
   const toggleColumn = (column) => {
