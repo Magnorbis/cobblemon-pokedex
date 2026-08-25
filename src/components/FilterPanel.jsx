@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./FilterPanel.css";
 
 const rawValueCategories = [
@@ -95,6 +96,8 @@ function FilterPanel({
   compatibleMode,
   setCompatibleMode,
 }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const types = new Set();
   const evYields = new Set();
   const buckets = new Set();
@@ -776,16 +779,20 @@ function FilterPanel({
               ? [...values].sort((a, b) => Number(a) - Number(b))
               : sorted(values);
 
-    return (
-      <div className="filter-section" key={category}>
-        <h3>
-          {label}
+    const hasSelected = filters[category]?.length > 0;
 
-          {filters[category]?.length > 0 && (
+    return (
+      <details className="filter-section" key={category}>
+        <summary className="filter-section-header">
+          <span>{label}</span>
+
+          {hasSelected && (
             <button
               className="filter-button-clear"
               type="button"
-              onClick={() => {
+              onClick={(event) => {
+                event.preventDefault();
+
                 setFilters((previous) => {
                   const next = { ...previous };
                   delete next[category];
@@ -796,12 +803,11 @@ function FilterPanel({
               Clear
             </button>
           )}
-        </h3>
+        </summary>
 
         <div className="filter-options">
           {sortedValues.map((value) => {
             const selected = filters[category]?.includes(value) || false;
-
             const available = isFilterValueAvailable(category, value);
 
             return (
@@ -824,7 +830,7 @@ function FilterPanel({
             );
           })}
         </div>
-      </div>
+      </details>
     );
   };
 
@@ -837,16 +843,21 @@ function FilterPanel({
       String(value).toLowerCase().includes(search.toLowerCase()),
     );
 
-    return (
-      <div className="filter-section">
-        <h3>
-          {label}
+    const hasSelected =
+      filters[category]?.length > 0 || Boolean(filters[`${category}Search`]);
 
-          {(filters[category]?.length > 0 || filters[`${category}Search`]) && (
+    return (
+      <details className="filter-section">
+        <summary className="filter-section-header">
+          <span>{label}</span>
+
+          {hasSelected && (
             <button
               className="filter-button-clear"
               type="button"
-              onClick={() => {
+              onClick={(event) => {
+                event.preventDefault();
+
                 setFilters((previous) => {
                   const next = { ...previous };
                   delete next[category];
@@ -858,7 +869,7 @@ function FilterPanel({
               Clear
             </button>
           )}
-        </h3>
+        </summary>
 
         <input
           className="filter-search"
@@ -898,150 +909,192 @@ function FilterPanel({
             );
           })}
         </div>
-      </div>
+      </details>
     );
   };
 
   return (
-    <div className="filter-panel">
-      <div className="filter-panel-header">
-        <h2>Filters</h2>
+    <>
+      <button
+        className="filter-panel-open"
+        type="button"
+        onClick={() => setIsOpen(true)}
+      >
+        Filters
+      </button>
 
-        <button className="filter-button-clear" type="button" onClick={clearFilters}>
-          Clear All Filters
-        </button>
-      </div>
-
-      <div className="filter-section compatible-filter">
-        <h3>Compatible Filters</h3>
-
+      {isOpen && (
         <button
-          className="filter-button"
+          className="filter-panel-backdrop"
           type="button"
-          onClick={() => {
-            setCompatibleMode((previous) => {
-              const newValue = !previous;
-
-              if (newValue) {
-                setFilters({});
-              }
-
-              return newValue;
-            });
-          }}
-        >
-          {compatibleMode ? "On" : "Off"}
-        </button>
-      </div>
-
-      {renderFilter("Types", "types", types)}
-
-      {renderFilter("EV Yield", "evYield", evYields)}
-
-      {renderFilter("Bucket", "bucket", buckets)}
-
-      {renderFilter("Position", "position", positions)}
-
-      {renderSearchableFilter("Presets", "presets", presets)}
-
-      {renderFilter("Time", "time", times)}
-
-      {renderFilter("Weather", "weather", weathers)}
-
-      {renderFilter("Sky", "sky", skies)}
-
-      {renderSearchableFilter(
-        "Biome References",
-        "biomeReferences",
-        biomeReferences,
+          aria-label="Close filters"
+          onClick={() => setIsOpen(false)}
+        />
       )}
 
-      {renderSearchableFilter("Biomes", "biomes", actualBiomes)}
+      <aside className={`filter-panel ${isOpen ? "filter-panel-opened" : ""}`}>
+        <div className="filter-panel-header">
+          <h2>Filters</h2>
 
-      {renderSearchableFilter(
-        "Anti Biome References",
-        "antiBiomeReferences",
-        antiBiomeReferences,
-      )}
+          <div className="filter-panel-header-actions">
+            <button
+              className="filter-button-clear"
+              type="button"
+              onClick={clearFilters}
+            >
+              Clear All
+            </button>
 
-      {renderSearchableFilter("Anti Biomes", "antiBiomes", antiBiomes)}
+            <button
+              className="filter-panel-close"
+              type="button"
+              onClick={() => setIsOpen(false)}
+              aria-label="Close filters"
+            >
+              ×
+            </button>
+          </div>
+        </div>
 
-      {renderFilter("Sky Light", "skyLight", skyLights)}
+        <div className="filter-panel-content">
+          <div className="compatible-filter">
+              <span>Compatible Filters</span>
 
-      {renderFilter("Bait", "bait", baits)}
+            <button
+              className={`filter-button ${
+                compatibleMode ? "filter-button-active" : ""
+              }`}
+              type="button"
+              onClick={() => {
+                setCompatibleMode((previous) => {
+                  const newValue = !previous;
 
-      {renderFilter("Rod Type", "rodType", rodTypes)}
+                  if (newValue) {
+                    setFilters({});
+                  }
 
-      {renderFilter("Moon Phase", "moonPhase", moonPhases)}
+                  return newValue;
+                });
+              }}
+            >
+              {compatibleMode ? "On" : "Off"}
+            </button>
+          </div>
 
-      {renderSearchableFilter("Base Blocks", "baseBlocks", baseBlocks)}
+          {renderFilter("Types", "types", types)}
 
-      {renderSearchableFilter("Nearby Blocks", "nearbyBlocks", nearbyBlocks)}
+          {renderFilter("EV Yield", "evYield", evYields)}
 
-      {renderSearchableFilter("Structures", "structures", structures)}
+          {renderFilter("Bucket", "bucket", buckets)}
 
-      {renderFilter("Slime Chunk", "slimeChunk", slimeChunks)}
+          {renderFilter("Position", "position", positions)}
 
-      {renderFilter("Min X", "minX", minXs)}
+          {renderSearchableFilter("Presets", "presets", presets)}
 
-      {renderFilter("Max X", "maxX", maxXs)}
+          {renderFilter("Time", "time", times)}
 
-      {renderFilter("Min Y", "minY", minYs)}
+          {renderFilter("Weather", "weather", weathers)}
 
-      {renderFilter("Max Y", "maxY", maxYs)}
+          {renderFilter("Sky", "sky", skies)}
 
-      {renderFilter("Min Lure Level", "minLureLevel", minLureLevels)}
+          {renderSearchableFilter(
+            "Biome References",
+            "biomeReferences",
+            biomeReferences,
+          )}
 
-      {renderFilter("Max Lure Level", "maxLureLevel", maxLureLevels)}
+          {renderSearchableFilter("Biomes", "biomes", actualBiomes)}
 
-      {renderFilter("Max Light", "maxLight", maxLights)}
+          {renderSearchableFilter(
+            "Anti Biome References",
+            "antiBiomeReferences",
+            antiBiomeReferences,
+          )}
 
-      {renderFilter("Anti Time", "antiTime", antiTimes)}
+          {renderSearchableFilter("Anti Biomes", "antiBiomes", antiBiomes)}
 
-      {renderFilter("Anti Slime Chunk", "antiSlimeChunk", antiSlimeChunks)}
+          {renderFilter("Sky Light", "skyLight", skyLights)}
 
-      {renderFilter("Anti Min Y", "antiMinY", antiMinYs)}
+          {renderFilter("Bait", "bait", baits)}
 
-      {renderFilter("Anti Max Y", "antiMaxY", antiMaxYs)}
+          {renderFilter("Rod Type", "rodType", rodTypes)}
 
-      {renderFilter(
-        "Anti Min Lure Level",
-        "antiMinLureLevel",
-        antiMinLureLevels,
-      )}
+          {renderFilter("Moon Phase", "moonPhase", moonPhases)}
 
-      {renderSearchableFilter(
-        "Anti Nearby Blocks",
-        "antiNearbyBlocks",
-        antiNearbyBlocks,
-      )}
+          {renderSearchableFilter("Base Blocks", "baseBlocks", baseBlocks)}
 
-      {renderSearchableFilter(
-        "Anti Structures",
-        "antiStructures",
-        antiStructures,
-      )}
+          {renderSearchableFilter(
+            "Nearby Blocks",
+            "nearbyBlocks",
+            nearbyBlocks,
+          )}
 
-      {Object.keys(otherConditions)
-        .sort()
-        .map((condition) =>
-          renderFilter(
-            condition,
-            `other.${condition}`,
-            otherConditions[condition],
-          ),
-        )}
+          {renderSearchableFilter("Structures", "structures", structures)}
 
-      {Object.keys(antiOtherConditions)
-        .sort()
-        .map((condition) =>
-          renderFilter(
-            `Anti ${formatFilterValue(condition, "other")}`,
-            `antiOther.${condition}`,
-            antiOtherConditions[condition],
-          ),
-        )}
-    </div>
+          {renderFilter("Slime Chunk", "slimeChunk", slimeChunks)}
+
+          {renderFilter("Min X", "minX", minXs)}
+
+          {renderFilter("Max X", "maxX", maxXs)}
+
+          {renderFilter("Min Y", "minY", minYs)}
+
+          {renderFilter("Max Y", "maxY", maxYs)}
+
+          {renderFilter("Min Lure Level", "minLureLevel", minLureLevels)}
+
+          {renderFilter("Max Lure Level", "maxLureLevel", maxLureLevels)}
+
+          {renderFilter("Max Light", "maxLight", maxLights)}
+
+          {renderFilter("Anti Time", "antiTime", antiTimes)}
+
+          {renderFilter("Anti Slime Chunk", "antiSlimeChunk", antiSlimeChunks)}
+
+          {renderFilter("Anti Min Y", "antiMinY", antiMinYs)}
+
+          {renderFilter("Anti Max Y", "antiMaxY", antiMaxYs)}
+
+          {renderFilter(
+            "Anti Min Lure Level",
+            "antiMinLureLevel",
+            antiMinLureLevels,
+          )}
+
+          {renderSearchableFilter(
+            "Anti Nearby Blocks",
+            "antiNearbyBlocks",
+            antiNearbyBlocks,
+          )}
+
+          {renderSearchableFilter(
+            "Anti Structures",
+            "antiStructures",
+            antiStructures,
+          )}
+
+          {Object.keys(otherConditions)
+            .sort()
+            .map((condition) =>
+              renderFilter(
+                condition,
+                `other.${condition}`,
+                otherConditions[condition],
+              ),
+            )}
+
+          {Object.keys(antiOtherConditions)
+            .sort()
+            .map((condition) =>
+              renderFilter(
+                `Anti ${formatFilterValue(condition, "other")}`,
+                `antiOther.${condition}`,
+                antiOtherConditions[condition],
+              ),
+            )}
+        </div>
+      </aside>
+    </>
   );
 }
 
