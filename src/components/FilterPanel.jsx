@@ -170,9 +170,13 @@ function FilterPanel({
         positions.add(spawn.position);
       }
 
-      spawn.presets?.forEach((preset) => {
-        presets.add(preset);
-      });
+      if (spawn.presets?.length) {
+        spawn.presets.forEach((preset) => {
+          presets.add(preset);
+        });
+      } else {
+        presets.add("-");
+      }
 
       spawn.biomes?.forEach((biome) => {
         if (biome.reference) {
@@ -184,15 +188,19 @@ function FilterPanel({
         });
       });
 
-      spawn.anticonditions?.biomes?.forEach((biome) => {
-        if (biome.reference) {
-          antiBiomeReferences.add(normalizedBiomeReference(biome.reference));
-        }
+      if (spawn.anticonditions?.biomes?.length) {
+        spawn.anticonditions?.biomes?.forEach((biome) => {
+          if (biome.reference) {
+            antiBiomeReferences.add(normalizedBiomeReference(biome.reference));
+          }
 
-        biome.biomes?.forEach((actualBiome) => {
-          antiBiomes.add(actualBiome);
+          biome.biomes?.forEach((actualBiome) => {
+            antiBiomes.add(actualBiome);
+          });
         });
-      });
+      } else {
+        antiBiomes.add("-");
+      }
 
       // Get all conditions and anticonditions and add to their sets
       const conditions = spawn.conditions || {};
@@ -208,6 +216,8 @@ function FilterPanel({
 
       if ("canSeeSky" in conditions) {
         skies.add(conditions.canSeeSky ? "Yes" : "No");
+      } else {
+        skies.add("-");
       }
 
       if (
@@ -218,6 +228,8 @@ function FilterPanel({
         const max = conditions.maxSkyLight ?? 15;
 
         skyLights.add(`${min}-${max}`);
+      } else {
+        skyLights.add("-");
       }
 
       if (conditions.bait) {
@@ -336,6 +348,18 @@ function FilterPanel({
         }
       });
 
+      Object.keys(otherConditions).forEach((condition) => {
+        const hasCondition = spawnEntries.some(
+          ({ spawn }) =>
+            !dedicatedConditionNames.includes(condition) &&
+            condition in (spawn.conditions || {}),
+        );
+
+        if (hasCondition) {
+          otherConditions[condition].add("-");
+        }
+      });
+
       // Add all other anticonditions in case these exist
       Object.entries(anticonditions).forEach(([condition, value]) => {
         if (dedicatedAntiConditionNames.includes(condition)) {
@@ -354,12 +378,28 @@ function FilterPanel({
           antiOtherConditions[condition].add(String(value));
         }
       });
+
+      Object.keys(antiOtherConditions).forEach((condition) => {
+        const hasCondition = spawnEntries.some(
+          ({ spawn }) =>
+            !dedicatedAntiConditionNames.includes(condition) &&
+            condition in (spawn.anticonditions || {}),
+        );
+
+        if (hasCondition) {
+          antiOtherConditions[condition].add("-");
+        }
+      });
     });
   });
 
   // Default sorting
-  const sorted = (values) =>
-    [...values].sort((a, b) => String(a).localeCompare(String(b)));
+  const sortWithEmptyFirst = (values) =>
+    [...values].sort((a, b) => {
+      if (a === "-") return -1;
+      if (b === "-") return 1;
+      return String(a).localeCompare(String(b));
+    });
 
   const spawnHasBiomeReference = (spawn, value) => {
     return spawn.biomes?.some(
@@ -413,7 +453,9 @@ function FilterPanel({
         return spawn.position === value;
 
       case "presets":
-        return spawn.presets?.includes(value);
+        return value === "-"
+          ? !spawn.presets?.length
+          : spawn.presets?.includes(value);
 
       case "time":
         return conditions.timeRange === value;
@@ -428,6 +470,10 @@ function FilterPanel({
           : conditions.isRaining === false;
 
       case "sky":
+        if (value === "-") {
+          return !("canSeeSky" in conditions);
+        }
+
         if (!("canSeeSky" in conditions)) {
           return false;
         }
@@ -446,9 +492,20 @@ function FilterPanel({
         return spawnHasAntiBiomeReference(spawn, value);
 
       case "antiBiomes":
+        if (value === "-") {
+          return !spawn.anticonditions?.biomes?.length;
+        }
+
         return spawnHasAntiBiome(spawn, value);
 
       case "skyLight": {
+        if (value === "-") {
+          return (
+            conditions.minSkyLight === undefined &&
+            conditions.maxSkyLight === undefined
+          );
+        }
+
         const min = conditions.minSkyLight ?? 0;
         const max = conditions.maxSkyLight ?? 15;
 
@@ -565,6 +622,10 @@ function FilterPanel({
         if (category.startsWith("other.")) {
           const condition = category.slice(6);
 
+          if (value === "-") {
+            return !(condition in conditions);
+          }
+
           if (!(condition in conditions)) {
             return false;
           }
@@ -581,6 +642,10 @@ function FilterPanel({
         if (category.startsWith("antiOther.")) {
           const condition = category.slice(10);
           const antiConditions = spawn.anticonditions || {};
+
+          if (value === "-") {
+            return !(condition in antiConditions);
+          }
 
           if (!(condition in antiConditions)) {
             return false;
@@ -703,8 +768,15 @@ function FilterPanel({
 
       if (category === "antiBiomes") {
         const antiBiomeGroups = entry.spawn.anticonditions?.biomes || [];
-
         const candidateValues = [...selected, value];
+
+        if (candidateValues.includes("-")) {
+          if (candidateValues.length > 1) {
+            return false;
+          }
+
+          return antiBiomeGroups.length === 0;
+        }
 
         const matchesAnti = antiBiomeGroups.some((biome) =>
           candidateValues.every((selectedBiome) =>
@@ -777,7 +849,7 @@ function FilterPanel({
               })
             : numericCategories.includes(category)
               ? [...values].sort((a, b) => Number(a) - Number(b))
-              : sorted(values);
+              : sortWithEmptyFirst(values);
 
     const hasSelected = filters[category]?.length > 0;
 
@@ -836,7 +908,7 @@ function FilterPanel({
 
   // Searchable checkbox filter
   const renderSearchableFilter = (label, category, values) => {
-    const sortedValues = sorted(values);
+    const sortedValues = sortWithEmptyFirst(values);
     const search = filters[`${category}Search`] || "";
 
     const filteredValues = sortedValues.filter((value) =>
@@ -958,7 +1030,7 @@ function FilterPanel({
 
         <div className="filter-panel-content">
           <div className="compatible-filter">
-              <span>Compatible Filters</span>
+            <span>Compatible Filters</span>
 
             <button
               className={`filter-button ${
