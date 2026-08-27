@@ -27,7 +27,6 @@ A web-based Pokédex for [Cobblemon](https://cobblemon.com/), focused on explori
 * Customizable table columns
 * Detailed tooltips for complex spawn information
 * Pokémon type, rarity, EV yield, biome, weather, and other visual badges
-* Responsive layout for desktop and mobile
 
 ## Data
 
@@ -42,36 +41,6 @@ The displayed spawn information is intended to make Cobblemon's spawning system 
 * JavaScript
 * CSS
 * GitHub Pages
-
-## Development
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-Preview the production build locally:
-
-```bash
-npm run preview
-```
-
-## Deployment
-
-The project is deployed as a static site and can be hosted using GitHub Pages or another static hosting provider.
 
 ## Copyright and Usage
 
