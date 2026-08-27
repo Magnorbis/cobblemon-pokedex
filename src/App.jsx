@@ -14,7 +14,10 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    Promise.all([fetch("/data/pokemon.json"), fetch("/data/biomes.json")])
+    Promise.all([
+      fetch(`${import.meta.env.BASE_URL}data/pokemon.json`),
+      fetch(`${import.meta.env.BASE_URL}data/biomes.json`)
+    ])
       .then(async ([pokemonResponse, biomesResponse]) => {
         if (!pokemonResponse.ok) {
           throw new Error(
