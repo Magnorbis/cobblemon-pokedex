@@ -22,6 +22,7 @@ A web-based Pokédex for [Cobblemon](https://cobblemon.com/), focused on explori
   * Height and light level
   * Slime chunks
   * Other spawn conditions
+  
 * Combine multiple filters to narrow down results
 * Compatible Filters mode to show only filter options that can produce matching results
 * Customizable table columns
