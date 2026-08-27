@@ -1,16 +1,86 @@
-# React + Vite
+# Cobblemon Pokédex
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web-based Pokédex for [Cobblemon](https://cobblemon.com/), focused on exploring Pokémon spawn data and the conditions that determine where and when Pokémon can spawn.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* Browse Pokémon and their spawn information
+* Search and filter Pokémon by:
 
-## React Compiler
+  * Type
+  * EV yield
+  * Rarity
+  * Spawn position
+  * Time
+  * Weather
+  * Sky visibility and sky light
+  * Biomes and biome references
+  * Bait and rod type
+  * Moon phase
+  * Required blocks
+  * Structures
+  * Height and light level
+  * Slime chunks
+  * Other spawn conditions
+* Combine multiple filters to narrow down results
+* Compatible Filters mode to show only filter options that can produce matching results
+* Customizable table columns
+* Detailed tooltips for complex spawn information
+* Pokémon type, rarity, EV yield, biome, weather, and other visual badges
+* Responsive layout for desktop and mobile
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Data
 
-## Expanding the ESLint configuration
+The Pokédex uses data extracted from Cobblemon's Pokémon species and spawn data.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The displayed spawn information is intended to make Cobblemon's spawning system easier to explore without requiring users to inspect the underlying game data manually.
+
+## Tech Stack
+
+* React
+* Vite
+* JavaScript
+* CSS
+* GitHub Pages
+
+## Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+Preview the production build locally:
+
+```bash
+npm run preview
+```
+
+## Deployment
+
+The project is deployed as a static site and can be hosted using GitHub Pages or another static hosting provider.
+
+## Copyright and Usage
+
+© 2026 Magnorbis. All rights reserved.
+
+The source code of this project is **not open source** and is provided for viewing purposes only.
+
+You may view this repository and its source code on GitHub, but you may not copy, modify, redistribute, republish, or use substantial portions of the source code or assets in another project without explicit permission from the author.
+
+Cobblemon and Pokémon are trademarks of their respective owners. This project is a fan-made, non-commercial tool and is not affiliated with or endorsed by the Cobblemon or Pokémon companies.
+
+Cobblemon data and assets originating from the Cobblemon project remain subject to their respective licenses and terms.
