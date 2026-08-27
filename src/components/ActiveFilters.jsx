@@ -29,12 +29,13 @@ const filterNames = {
   maxLureLevel: "Max Lure Level",
   maxLight: "Max Light",
   antiTime: "Anti Time",
-  antiIsSlimeChunk: "Anti Slime Chunk",
+  antiSlimeChunk: "Anti Slime Chunk",
   antiMinY: "Anti Min Y",
   antiMaxY: "Anti Max Y",
   antiMinLureLevel: "Anti Min Lure Level",
   antiNearbyBlocks: "Anti Nearby Blocks",
   antiStructures: "Anti Structures",
+  otherConditionFilter: "Other Conditions",
 };
 
 const rawValueCategories = [
@@ -66,11 +67,15 @@ function ActiveFilters({ filters, setFilters }) {
     }
 
     if (category === "sky") {
-      return value === "Yes" ? "Yes" : "No";
+      return value === "-" ? "-" : value;
     }
 
     if (category === "slimeChunk" || category === "antiSlimeChunk") {
       return value;
+    }
+
+    if (value === "-") {
+      return "-";
     }
 
     return formatFilterValue(value, category);

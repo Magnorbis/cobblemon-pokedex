@@ -71,6 +71,10 @@ const numericCategories = [
 
 // Default formatting
 function formatFilterValue(value, category) {
+  if (value === "-") {
+    return "-";
+  }
+
   if (rawValueCategories.includes(category)) {
     return String(value);
   }
@@ -143,6 +147,8 @@ function FilterPanel({
 
   const otherConditions = {};
   const antiOtherConditions = {};
+
+  const otherConditionFilter = new Set(["-"]);
 
   const spawnEntries = pokemon.flatMap((pokemonEntry) =>
     pokemonEntry.spawns.map((spawn) => ({
@@ -348,18 +354,6 @@ function FilterPanel({
         }
       });
 
-      Object.keys(otherConditions).forEach((condition) => {
-        const hasCondition = spawnEntries.some(
-          ({ spawn }) =>
-            !dedicatedConditionNames.includes(condition) &&
-            condition in (spawn.conditions || {}),
-        );
-
-        if (hasCondition) {
-          otherConditions[condition].add("-");
-        }
-      });
-
       // Add all other anticonditions in case these exist
       Object.entries(anticonditions).forEach(([condition, value]) => {
         if (dedicatedAntiConditionNames.includes(condition)) {
@@ -378,19 +372,15 @@ function FilterPanel({
           antiOtherConditions[condition].add(String(value));
         }
       });
-
-      Object.keys(antiOtherConditions).forEach((condition) => {
-        const hasCondition = spawnEntries.some(
-          ({ spawn }) =>
-            !dedicatedAntiConditionNames.includes(condition) &&
-            condition in (spawn.anticonditions || {}),
-        );
-
-        if (hasCondition) {
-          antiOtherConditions[condition].add("-");
-        }
-      });
     });
+  });
+
+  Object.keys(otherConditions).forEach((condition) => {
+    otherConditions[condition].add("-");
+  });
+
+  Object.keys(antiOtherConditions).forEach((condition) => {
+    antiOtherConditions[condition].add("-");
   });
 
   // Default sorting
@@ -587,7 +577,7 @@ function FilterPanel({
       case "antiTime":
         return anticonditions.timeRange === value;
 
-      case "antiIsSlimeChunk":
+      case "antiSlimeChunk":
         return anticonditions.isSlimeChunk === true && value === "Yes";
 
       case "antiMinY":
@@ -617,6 +607,33 @@ function FilterPanel({
 
       case "antiStructures":
         return spawnHasAntiConditionArrayValue(spawn, "structures", value);
+
+      case "otherConditionFilter": {
+        if (value !== "-") {
+          return false;
+        }
+
+        const otherConditionExcluded = new Set([
+          "biomes",
+          "timeRange",
+          "isRaining",
+          "minSkyLight",
+          "maxSkyLight",
+          "canSeeSky",
+        ]);
+
+        const otherAntiConditionExcluded = new Set(["biomes"]);
+
+        const hasOtherCondition = Object.keys(conditions).some(
+          (condition) => !otherConditionExcluded.has(condition),
+        );
+
+        const hasOtherAntiCondition = Object.keys(anticonditions).some(
+          (condition) => !otherAntiConditionExcluded.has(condition),
+        );
+
+        return !hasOtherCondition && !hasOtherAntiCondition;
+      }
 
       default:
         if (category.startsWith("other.")) {
@@ -696,12 +713,16 @@ function FilterPanel({
       ) {
         const biomeGroups =
           category === "biomes"
-            ? entry.spawn.biomes
-            : entry.spawn.anticonditions?.biomes;
+            ? entry.spawn.biomes || []
+            : entry.spawn.anticonditions?.biomes || [];
 
-        matchesCategory = biomeGroups?.some((biome) =>
-          selected.every((value) => biome.biomes?.includes(value)),
-        );
+        if (selected.includes("-")) {
+          matchesCategory = selected.length === 1 && biomeGroups.length === 0;
+        } else {
+          matchesCategory = biomeGroups.some((biome) =>
+            selected.every((value) => biome.biomes?.includes(value)),
+          );
+        }
       } else {
         matchesCategory = compatibleMode
           ? selected.every((value) =>
@@ -835,13 +856,16 @@ function FilterPanel({
     // (Customized) sorting for different categories
     const sortedValues =
       category === "sky"
-        ? ["Yes", "No"].filter((value) => values.has(value))
+        ? ["-", "Yes", "No"].filter((value) => values.has(value))
         : category === "bucket"
           ? ["common", "uncommon", "rare", "ultra-rare"].filter((value) =>
               values.has(value),
             )
           : category === "skyLight"
             ? [...values].sort((a, b) => {
+                if (a === "-") return -1;
+                if (b === "-") return 1;
+
                 const [aMin, aMax] = a.split("-").map(Number);
                 const [bMin, bMax] = b.split("-").map(Number);
 
@@ -1086,6 +1110,12 @@ function FilterPanel({
           {renderSearchableFilter("Anti Biomes", "antiBiomes", antiBiomes)}
 
           {renderFilter("Sky Light", "skyLight", skyLights)}
+
+          {renderFilter(
+            "Other Conditions",
+            "otherConditionFilter",
+            otherConditionFilter,
+          )}
 
           {renderFilter("Bait", "bait", baits)}
 

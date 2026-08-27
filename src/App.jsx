@@ -87,6 +87,51 @@ function App() {
         );
   };
 
+  const otherConditionExcluded = new Set([
+    "biomes",
+    "timeRange",
+    "isRaining",
+    "minSkyLight",
+    "maxSkyLight",
+    "canSeeSky",
+  ]);
+
+  const otherAntiConditionExcluded = new Set(["biomes"]);
+
+  const matchesOtherConditionFilter = (conditions, anticonditions) => {
+    const selectedValues = filters.otherConditionFilter;
+
+    if (!selectedValues?.length) {
+      return true;
+    }
+
+    const hasOtherCondition = Object.keys(conditions).some(
+      (condition) => !otherConditionExcluded.has(condition),
+    );
+
+    const hasOtherAntiCondition = Object.keys(anticonditions).some(
+      (condition) => !otherAntiConditionExcluded.has(condition),
+    );
+
+    const hasOther = hasOtherCondition || hasOtherAntiCondition;
+
+    return compatibleMode
+      ? selectedValues.every((value) => {
+          if (value === "-") {
+            return !hasOther;
+          }
+
+          return false;
+        })
+      : selectedValues.some((value) => {
+          if (value === "-") {
+            return !hasOther;
+          }
+
+          return false;
+        });
+  };
+
   const matchesOtherFilters = (prefix, conditionSource) => {
     for (const key of Object.keys(filters)) {
       if (!key.startsWith(prefix)) {
@@ -100,6 +145,7 @@ function App() {
         continue;
       }
 
+      const hasCondition = conditionName in conditionSource;
       const conditionValue = conditionSource[conditionName];
 
       let values = [];
@@ -111,8 +157,20 @@ function App() {
       }
 
       const matches = compatibleMode
-        ? selectedValues.every((value) => values.includes(value))
-        : selectedValues.some((value) => values.includes(value));
+        ? selectedValues.every((value) => {
+            if (value === "-") {
+              return !hasCondition;
+            }
+
+            return values.includes(value);
+          })
+        : selectedValues.some((value) => {
+            if (value === "-") {
+              return !hasCondition;
+            }
+
+            return values.includes(value);
+          });
 
       if (!matches) {
         return false;
@@ -125,6 +183,10 @@ function App() {
   const matchesFilter = (pokemon, spawn) => {
     const conditions = spawn.conditions || {};
     const anticonditions = spawn.anticonditions || {};
+
+    if (!matchesOtherConditionFilter(conditions, anticonditions)) {
+      return false;
+    }
 
     if (filters.types?.length > 0) {
       if (
@@ -158,7 +220,15 @@ function App() {
     }
 
     if (filters.presets?.length > 0) {
-      if (!matchesArrayFilter(filters.presets, spawn.presets)) {
+      const matchesPresets = matchesSelectedValues(filters.presets, (value) => {
+        if (value === "-") {
+          return !spawn.presets?.length;
+        }
+
+        return spawn.presets?.includes(value);
+      });
+
+      if (!matchesPresets) {
         return false;
       }
     }
@@ -191,6 +261,10 @@ function App() {
 
     if (filters.sky?.length > 0) {
       const matchesSky = matchesSelectedValues(filters.sky, (value) => {
+        if (value === "-") {
+          return !("canSeeSky" in conditions);
+        }
+
         if (value === "Yes") {
           return conditions.canSeeSky === true;
         }
@@ -274,17 +348,18 @@ function App() {
     }
 
     if (filters.antiBiomes?.length > 0) {
-      const matchesAntiBiome = compatibleMode
-        ? anticonditions.biomes?.some((biome) =>
-            filters.antiBiomes.every((selectedBiome) =>
-              biome.biomes?.includes(selectedBiome),
-            ),
-          )
-        : anticonditions.biomes?.some((biome) =>
-            filters.antiBiomes.some((selectedBiome) =>
-              biome.biomes?.includes(selectedBiome),
-            ),
+      const matchesAntiBiome = matchesSelectedValues(
+        filters.antiBiomes,
+        (value) => {
+          if (value === "-") {
+            return !anticonditions.biomes?.length;
+          }
+
+          return anticonditions.biomes?.some((biome) =>
+            biome.biomes?.includes(value),
           );
+        },
+      );
 
       if (!matchesAntiBiome) {
         return false;
@@ -292,13 +367,23 @@ function App() {
     }
 
     if (filters.skyLight?.length > 0) {
-      const spawnMin = conditions.minSkyLight ?? 0;
-      const spawnMax = conditions.maxSkyLight ?? 15;
-      const spawnRange = `${spawnMin}-${spawnMax}`;
+      const matchesSkyLight = matchesSelectedValues(
+        filters.skyLight,
+        (value) => {
+          if (value === "-") {
+            return (
+              conditions.minSkyLight === undefined &&
+              conditions.maxSkyLight === undefined
+            );
+          }
 
-      const matchesSkyLight = compatibleMode
-        ? filters.skyLight.every((value) => spawnRange === String(value))
-        : filters.skyLight.some((value) => spawnRange === String(value));
+          const spawnMin = conditions.minSkyLight ?? 0;
+          const spawnMax = conditions.maxSkyLight ?? 15;
+          const spawnRange = `${spawnMin}-${spawnMax}`;
+
+          return spawnRange === String(value);
+        },
+      );
 
       if (!matchesSkyLight) {
         return false;
