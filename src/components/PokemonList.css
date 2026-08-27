@@ -74,8 +74,8 @@
 .pokemon-table td {
   padding: 0.7rem 0.85rem;
   border-bottom: 1px solid var(--color-border);
-  text-align: left;
-  vertical-align: top;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .pokemon-table td {
@@ -230,13 +230,13 @@
 
 .pokemon-table .column-ev-yield .pokemon-list-badges {
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 }
 .pokemon-table .column-biomes .pokemon-list-badges,
-.pokemon-table.column-anti-biomes .pokemon-list-badges,
+.pokemon-table .column-anti-biomes .pokemon-list-badges,
 .pokemon-table .column-presets .pokemon-list-badges {
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .pokemon-table .column-multiplier {
