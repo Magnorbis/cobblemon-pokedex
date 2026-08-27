@@ -28,9 +28,9 @@ body {
   --color-danger: #ef4444;
 
   /* Pokémon colors */
-  --pokemon-color-1: #78c850;
-  --pokemon-color-2: #a8d08d;
-  --pokemon-color-3: #355e3b;
+  --pokemon-color-1: #EE9C39;
+  --pokemon-color-2: #38A27C;
+  --pokemon-color-3: #DE7339;
 
   --color-primary: var(--pokemon-color-1);
   --color-primary-hover: var(--pokemon-color-2);

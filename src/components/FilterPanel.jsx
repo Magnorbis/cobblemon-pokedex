@@ -1033,13 +1033,17 @@ function FilterPanel({
           <h2>Filters</h2>
 
           <div className="filter-panel-header-actions">
-            <button
-              className="filter-button-clear"
-              type="button"
-              onClick={clearFilters}
-            >
-              Clear All
-            </button>
+            {Object.keys(filters).some(
+              (key) => !key.endsWith("Search") && filters[key]?.length > 0,
+            ) && (
+              <button
+                className="filter-button-clear"
+                type="button"
+                onClick={clearFilters}
+              >
+                Clear All
+              </button>
+            )}
 
             <button
               className="filter-panel-close"

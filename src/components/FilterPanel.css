@@ -8,7 +8,7 @@
 
   color: var(--color-text);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-primary);
   border-left: none;
   border-radius: 0 0.6rem 0.6rem 0;
 
@@ -175,6 +175,10 @@
   list-style: none;
 }
 
+.filter-section-header:hover {
+  color: var(--color-primary);
+}
+
 .filter-section-header::-webkit-details-marker {
   display: none;
 }
@@ -193,7 +197,16 @@
   transition: transform 0.15s ease;
 }
 
+.filter-section-header:hover::before {
+  color: var(--color-primary);
+}
+
+.filter-section[open] > .filter-section-header {
+  color: var(--color-primary);
+}
+
 .filter-section[open] > .filter-section-header::before {
+  color: var(--color-primary);
   transform: rotate(90deg);
 }
 
@@ -230,18 +243,47 @@
 }
 
 .filter-option input {
+  appearance: none;
+
   width: 1rem;
   height: 1rem;
-
   margin: 0;
+  flex-shrink: 0;
 
-  accent-color: var(--color-primary);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
 
   cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.filter-option input:hover {
+  border-color: var(--color-primary);
+}
+
+.filter-option input:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.15rem var(--color-primary-alpha);
+}
+
+.filter-option input:checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.filter-option input:checked:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
 }
 
 .filter-option input:disabled {
   cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .filter-search {
@@ -259,6 +301,10 @@
   border-radius: 0.4rem;
 
   font: inherit;
+}
+
+.filter-search:hover {
+  border-color: var(--color-primary-hover);
 }
 
 .filter-search::placeholder {
@@ -297,6 +343,7 @@
 .filter-button:hover,
 .filter-button-active {
   color: var(--color-primary);
+  background: var(--color-primary-alpha);
   border-color: var(--color-primary);
 }
 
