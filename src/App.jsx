@@ -615,7 +615,6 @@ function App() {
           </p>
 
           <PokemonList
-            key={`${searchQuery}-${JSON.stringify(filters)}-${compatibleMode}`}
             pokemon={filteredPokemon}
             biomes={biomes}
           />
