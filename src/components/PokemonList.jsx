@@ -698,6 +698,8 @@ function sortSpawns(spawns, sortColumn, sortDirection) {
 function renderCell(entry, column, biomes) {
   const { pokemon, spawn } = entry;
   const conditions = spawn.conditions || {};
+    const effectivePokemon = spawn.pokemonData || pokemon;
+
 
   switch (column) {
     case "dex":
@@ -707,10 +709,10 @@ function renderCell(entry, column, biomes) {
       return formatName(pokemon, spawn);
 
     case "types":
-      return formatTypes(pokemon.types);
+      return formatTypes(effectivePokemon.types);
 
     case "evYield":
-      return formatEvYield(pokemon.evYield);
+      return formatEvYield(effectivePokemon.evYield);
 
     case "bucket":
       if (!spawn.bucket) {

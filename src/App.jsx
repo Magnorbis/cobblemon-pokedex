@@ -16,7 +16,7 @@ function App() {
   useEffect(() => {
     Promise.all([
       fetch(`${import.meta.env.BASE_URL}data/pokemon.json`),
-      fetch(`${import.meta.env.BASE_URL}data/biomes.json`)
+      fetch(`${import.meta.env.BASE_URL}data/biomes.json`),
     ])
       .then(async ([pokemonResponse, biomesResponse]) => {
         if (!pokemonResponse.ok) {
@@ -183,7 +183,29 @@ function App() {
     return true;
   };
 
+  const getPokemonDataForSpawn = (pokemon, spawn) => {
+    if (!spawn.form) {
+      return pokemon;
+    }
+
+    const form = pokemon.forms.find((form) =>
+      form.aspects?.includes(spawn.form),
+    );
+
+    if (!form) {
+      return pokemon;
+    }
+
+    return {
+      ...pokemon,
+      types: form.types?.length > 0 ? form.types : pokemon.types,
+      evYield: form.evYield?.length > 0 ? form.evYield : pokemon.evYield,
+    };
+  };
+
   const matchesFilter = (pokemon, spawn) => {
+    const effectivePokemon = getPokemonDataForSpawn(pokemon, spawn);
+
     const conditions = spawn.conditions || {};
     const anticonditions = spawn.anticonditions || {};
 
@@ -194,7 +216,7 @@ function App() {
     if (filters.types?.length > 0) {
       if (
         !matchesSelectedValues(filters.types, (type) =>
-          pokemon.types?.includes(type),
+          effectivePokemon.types?.includes(type),
         )
       ) {
         return false;
@@ -204,7 +226,7 @@ function App() {
     if (filters.evYield?.length > 0) {
       if (
         !matchesSelectedValues(filters.evYield, (ev) =>
-          pokemon.evYield?.includes(ev),
+          effectivePokemon.evYield?.includes(ev),
         )
       ) {
         return false;
@@ -557,7 +579,12 @@ function App() {
   const filteredPokemon = pokemonData
     .map((pokemon) => ({
       ...pokemon,
-      spawns: pokemon.spawns.filter((spawn) => matchesFilter(pokemon, spawn)),
+      spawns: pokemon.spawns
+        .filter((spawn) => matchesFilter(pokemon, spawn))
+        .map((spawn) => ({
+          ...spawn,
+          pokemonData: getPokemonDataForSpawn(pokemon, spawn),
+        })),
     }))
     .filter((pokemon) => {
       if (/^#?\d{4}$/.test(normalizedQuery)) {
@@ -614,10 +641,7 @@ function App() {
             Showing {filteredSpawns} of {totalSpawns} spawn possibilities
           </p>
 
-          <PokemonList
-            pokemon={filteredPokemon}
-            biomes={biomes}
-          />
+          <PokemonList pokemon={filteredPokemon} biomes={biomes} />
         </section>
       </main>
     </div>
